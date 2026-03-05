@@ -19,7 +19,9 @@
                     </div>
                 @endif
 
-                <form action="{{ route('aset.update', $aset->id) }}" method="POST">
+                <form action="{{ route('aset.update', $aset->id) }}"
+                      method="POST"
+                      enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
 
@@ -27,79 +29,139 @@
 
                         <div>
                             <label>Nama Barang</label>
-                            <input type="text" name="nama_barang"
+                            <input type="text"
+                                   name="nama_barang"
                                    value="{{ old('nama_barang', $aset->nama_barang) }}"
-                                   class="w-full border rounded px-3 py-2" required>
+                                   class="w-full border rounded-lg px-3 py-2"
+                                   required>
                         </div>
 
                         <div>
                             <label>Kode Barang</label>
-                            <input type="text" name="kode_barang"
+                            <input type="text"
+                                   name="kode_barang"
                                    value="{{ old('kode_barang', $aset->kode_barang) }}"
-                                   class="w-full border rounded px-3 py-2" required>
+                                   class="w-full border rounded-lg px-3 py-2"
+                                   required>
                         </div>
 
                         <div>
                             <label>NUP</label>
-                            <input type="number" name="nup"
+                            <input type="number"
+                                   name="nup"
                                    value="{{ old('nup', $aset->nup) }}"
-                                   class="w-full border rounded px-3 py-2">
+                                   class="w-full border rounded-lg px-3 py-2">
                         </div>
 
                         <div>
                             <label>Merk / Tipe</label>
-                            <input type="text" name="merk_tipe"
+                            <input type="text"
+                                   name="merk_tipe"
                                    value="{{ old('merk_tipe', $aset->merk_tipe) }}"
-                                   class="w-full border rounded px-3 py-2">
+                                   class="w-full border rounded-lg px-3 py-2">
                         </div>
 
                         <div>
                             <label>Jumlah</label>
-                            <input type="number" name="jumlah"
+                            <input type="number"
+                                   name="jumlah"
                                    value="{{ old('jumlah', $aset->jumlah) }}"
-                                   class="w-full border rounded px-3 py-2">
+                                   class="w-full border rounded-lg px-3 py-2">
                         </div>
 
                         <div>
                             <label>Harga</label>
-                            <input type="number" name="harga"
+                            <input type="number"
+                                   name="harga"
                                    value="{{ old('harga', $aset->harga) }}"
-                                   class="w-full border rounded px-3 py-2" required>
+                                   class="w-full border rounded-lg px-3 py-2"
+                                   required>
                         </div>
 
                         <div class="md:col-span-2">
                             <label>Spesifikasi</label>
-                            <input type="text" name="spesifikasi"
+                            <input type="text"
+                                   name="spesifikasi"
                                    value="{{ old('spesifikasi', $aset->spesifikasi) }}"
-                                   class="w-full border rounded px-3 py-2">
+                                   class="w-full border rounded-lg px-3 py-2">
                         </div>
 
                         <div class="md:col-span-2">
                             <label>Cara Perolehan</label>
-                            <input type="text" name="cara_perolehan"
+                            <input type="text"
+                                   name="cara_perolehan"
                                    value="{{ old('cara_perolehan', $aset->cara_perolehan) }}"
-                                   class="w-full border rounded px-3 py-2">
+                                   class="w-full border rounded-lg px-3 py-2">
+                        </div>
+
+                        {{-- FOTO LAMA --}}
+                        <div class="md:col-span-2">
+                            <label class="block mb-2">Foto Aset</label>
+
+                            @if($aset->fotos->count())
+                                <div class="flex gap-3 flex-wrap mb-4">
+                                    @foreach($aset->fotos as $foto)
+                                        <img src="{{ asset('storage/'.$foto->path) }}"
+                                             class="h-24 rounded shadow">
+                                    @endforeach
+                                </div>
+                            @else
+                                <p class="text-gray-500 text-sm mb-3">
+                                    Belum ada foto
+                                </p>
+                            @endif
+
+                            <input type="file"
+                                   name="foto[]"
+                                   multiple
+                                   class="w-full border rounded-lg px-3 py-2">
+
+                            <small class="text-gray-500">
+                                Upload foto baru untuk menambahkan ke galeri
+                            </small>
                         </div>
 
                     </div>
 
-                    {{-- Hidden Koordinat --}}
-                    <input type="hidden" name="latitude" id="latitude" value="{{ $aset->latitude }}">
-                    <input type="hidden" name="longitude" id="longitude" value="{{ $aset->longitude }}">
+                    {{-- KOORDINAT --}}
+                    <div class="mt-6">
 
-                    {{-- MAP --}}
-                    <div class="mt-8">
-                        <label>Pilih Lokasi di Peta</label>
-                        <div id="map" style="height:400px;"></div>
+                        <button type="button"
+                                id="btnLokasiSaya"
+                                class="mb-3 px-4 py-2 bg-green-600 text-white rounded-lg">
+                            📍 Ambil Lokasi Saya
+                        </button>
+
+                        <div class="grid grid-cols-2 gap-6">
+                            <input type="text"
+                                   name="latitude"
+                                   id="latitude"
+                                   value="{{ old('latitude', $aset->latitude) }}"
+                                   placeholder="Latitude"
+                                   class="border rounded-lg px-3 py-2">
+
+                            <input type="text"
+                                   name="longitude"
+                                   id="longitude"
+                                   value="{{ old('longitude', $aset->longitude) }}"
+                                   placeholder="Longitude"
+                                   class="border rounded-lg px-3 py-2">
+                        </div>
                     </div>
 
-                    <div class="mt-6 flex justify-end gap-4">
+                    {{-- MAP --}}
+                    <div class="mt-6">
+                        <div id="map" class="w-full h-96 rounded-xl border"></div>
+                    </div>
+
+                    <div class="mt-8 flex justify-end gap-4">
                         <a href="{{ route('aset.index') }}"
-                           class="px-4 py-2 bg-gray-400 text-white rounded">
-                            Batal
+                           class="px-4 py-2 bg-gray-400 text-white rounded-lg">
+                           Batal
                         </a>
+
                         <button type="submit"
-                                class="px-6 py-2 bg-blue-600 text-white rounded">
+                                class="px-6 py-2 bg-blue-600 text-white rounded-lg">
                             Update
                         </button>
                     </div>
@@ -110,42 +172,46 @@
         </div>
     </div>
 
-    {{-- Leaflet CSS --}}
+    {{-- LEAFLET --}}
     <link rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-
-    {{-- Leaflet JS --}}
+          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        const lat = {{ $aset->latitude ?? -7.983908 }};
+        const lng = {{ $aset->longitude ?? 112.621391 }};
 
-            let lat = {{ $aset->latitude ?? -7.98 }};
-            let lng = {{ $aset->longitude ?? 112.62 }};
+        const map = L.map('map').setView([lat, lng], 13);
 
-            const map = L.map('map').setView([lat, lng], 12);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
+            .addTo(map);
 
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; OpenStreetMap'
-            }).addTo(map);
+        let marker = L.marker([lat, lng], { draggable:true }).addTo(map);
 
-            let marker = L.marker([lat, lng], { draggable: true }).addTo(map);
-
-            // Kalau marker digeser
-            marker.on('dragend', function(event) {
-                const position = event.target.getLatLng();
-                document.getElementById('latitude').value = position.lat;
-                document.getElementById('longitude').value = position.lng;
-            });
-
-            // Kalau klik peta
-            map.on('click', function(e) {
-                marker.setLatLng(e.latlng);
-                document.getElementById('latitude').value = e.latlng.lat;
-                document.getElementById('longitude').value = e.latlng.lng;
-            });
-
+        map.on('click', function(e){
+            marker.setLatLng(e.latlng);
+            latitude.value = e.latlng.lat;
+            longitude.value = e.latlng.lng;
         });
+
+        marker.on('dragend', function(){
+            const pos = marker.getLatLng();
+            latitude.value = pos.lat;
+            longitude.value = pos.lng;
+        });
+
+        btnLokasiSaya.onclick = function(){
+            navigator.geolocation.getCurrentPosition(function(pos){
+                const newLat = pos.coords.latitude;
+                const newLng = pos.coords.longitude;
+
+                marker.setLatLng([newLat,newLng]);
+                map.setView([newLat,newLng],16);
+
+                latitude.value = newLat;
+                longitude.value = newLng;
+            });
+        };
     </script>
 
-</x-app-layout> 
+</x-app-layout>

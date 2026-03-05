@@ -39,7 +39,7 @@ Route::middleware(['auth'])->group(function () {
 
         $query = Aset::query();
 
-        // SEARCH TEXT
+        // SEARCH
         if ($search) {
             $search = trim(strtolower($search));
 
@@ -71,10 +71,55 @@ Route::middleware(['auth'])->group(function () {
 
     /*
     |------------------------------------------
-    | CRUD ASET (Resource Route)
+    | CRUD ASET
     |------------------------------------------
     */
     Route::resource('aset', AsetController::class);
+
+
+    /*
+    |------------------------------------------
+    | PETA ASET (HALAMAN UTAMA MAP)
+    |------------------------------------------
+    */
+    Route::get('/peta-aset', function () {
+        return view('peta.index');
+    })->name('peta.aset');
+
+
+    /*
+    |------------------------------------------
+    | MAP DATA (JUMLAH ASET PER LOKASI)
+    |------------------------------------------
+    */
+    Route::get('/map-data', function () {
+
+        return Aset::selectRaw('
+                latitude,
+                longitude,
+                COUNT(*) as jumlah_aset,
+                SUM(harga) as total_nilai
+            ')
+            ->whereNotNull('latitude')
+            ->whereNotNull('longitude')
+            ->groupBy('latitude', 'longitude')
+            ->get();
+
+    })->name('map.data');
+
+
+    /*
+    |------------------------------------------
+    | HEATMAP DATA (KEPADATAN)
+    |------------------------------------------
+    */
+    Route::get('/heatmap-data', function () {
+
+        return Aset::whereNotNull('latitude')
+            ->whereNotNull('longitude')
+            ->get(['latitude', 'longitude']);
+
+    })->name('heatmap.data');
 
 
     /*
@@ -93,18 +138,6 @@ Route::middleware(['auth'])->group(function () {
         return redirect()->back()->with('success', 'Data Aset berhasil diimpor!');
 
     })->name('aset.import');
-
-
-    /*
-    |------------------------------------------
-    | Heatmap Data API
-    |------------------------------------------
-    */
-    Route::get('/heatmap-data', function () {
-        return Aset::whereNotNull('latitude')
-            ->whereNotNull('longitude')
-            ->get(['latitude', 'longitude']);
-    });
 
 
     /*

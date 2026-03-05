@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-2xl text-gray-800 leading-tight">
-            {{ __('Ringkasan Aset Kominfo') }}
+            {{ __('Manajemen Aset Kominfo') }}
         </h2>
     </x-slot>
 
@@ -68,7 +68,7 @@
                     <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
 
                         <h3 class="text-lg font-bold text-gray-700">
-                            Daftar Inventaris (Data Asli Kominfo)
+                            Daftar Inventaris
                         </h3>
 
                         <form action="{{ route('dashboard') }}" method="GET"

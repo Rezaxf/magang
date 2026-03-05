@@ -19,79 +19,95 @@
                     </div>
                 @endif
 
-                <form action="{{ route('aset.store') }}" method="POST">
+                <form action="{{ route('aset.store') }}"
+                      method="POST"
+                      enctype="multipart/form-data">
                     @csrf
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
                         <div>
-                            <label class="block text-sm font-medium">Nama Barang</label>
-                            <input type="text" name="nama_barang" 
-                                   class="w-full mt-1 border rounded-lg px-3 py-2"
-                                   required>
+                            <label>Nama Barang</label>
+                            <input type="text" name="nama_barang"
+                                   class="w-full border rounded-lg px-3 py-2" required>
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium">Kode Barang</label>
-                            <input type="text" name="kode_barang" 
-                                   class="w-full mt-1 border rounded-lg px-3 py-2"
-                                   required>
+                            <label>Kode Barang</label>
+                            <input type="text" name="kode_barang"
+                                   class="w-full border rounded-lg px-3 py-2" required>
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium">NUP</label>
-                            <input type="number" name="nup" 
-                                   class="w-full mt-1 border rounded-lg px-3 py-2">
+                            <label>NUP</label>
+                            <input type="number" name="nup"
+                                   class="w-full border rounded-lg px-3 py-2">
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium">Merk / Tipe</label>
-                            <input type="text" name="merk_tipe" 
-                                   class="w-full mt-1 border rounded-lg px-3 py-2">
+                            <label>Merk / Tipe</label>
+                            <input type="text" name="merk_tipe"
+                                   class="w-full border rounded-lg px-3 py-2">
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium">Jumlah</label>
-                            <input type="number" name="jumlah" 
-                                   class="w-full mt-1 border rounded-lg px-3 py-2">
+                            <label>Jumlah</label>
+                            <input type="number" name="jumlah"
+                                   class="w-full border rounded-lg px-3 py-2">
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium">Harga</label>
-                            <input type="number" name="harga" 
-                                   class="w-full mt-1 border rounded-lg px-3 py-2"
-                                   required>
+                            <label>Harga</label>
+                            <input type="number" name="harga"
+                                   class="w-full border rounded-lg px-3 py-2" required>
                         </div>
 
                         <div class="md:col-span-2">
-                            <label class="block text-sm font-medium">Spesifikasi</label>
-                            <input type="text" name="spesifikasi" 
-                                   class="w-full mt-1 border rounded-lg px-3 py-2">
+                            <label>Spesifikasi</label>
+                            <input type="text" name="spesifikasi"
+                                   class="w-full border rounded-lg px-3 py-2">
                         </div>
 
                         <div class="md:col-span-2">
-                            <label class="block text-sm font-medium">Cara Perolehan</label>
-                            <input type="text" name="cara_perolehan" 
-                                   class="w-full mt-1 border rounded-lg px-3 py-2">
+                            <label>Cara Perolehan</label>
+                            <input type="text" name="cara_perolehan"
+                                   class="w-full border rounded-lg px-3 py-2">
+                        </div>
+
+                        {{-- MULTIPLE FOTO --}}
+                        <div class="md:col-span-2">
+                            <label>Foto Aset</label>
+                            <input type="file" name="foto[]" multiple
+                                   class="w-full border rounded-lg px-3 py-2">
+                            <small class="text-gray-500">
+                                Bisa upload lebih dari satu foto
+                            </small>
                         </div>
 
                     </div>
 
-                    {{-- Hidden Input Koordinat --}}
-                    <input type="hidden" name="latitude" id="latitude">
-                    <input type="hidden" name="longitude" id="longitude">
+                    {{-- KOORDINAT --}}
+                    <div class="mt-6">
 
-                    {{-- MAP PICKER --}}
-                    <div class="mt-8">
-                        <label class="block text-sm font-medium mb-2">
-                            Pilih Lokasi Aset di Peta
-                        </label>
+                        <button type="button"
+                                id="btnLokasiSaya"
+                                class="mb-3 px-4 py-2 bg-green-600 text-white rounded-lg">
+                            📍 Ambil Lokasi Saya
+                        </button>
 
+                        <div class="grid grid-cols-2 gap-6">
+                            <input type="text" name="latitude" id="latitude"
+                                   placeholder="Latitude"
+                                   class="border rounded-lg px-3 py-2">
+
+                            <input type="text" name="longitude" id="longitude"
+                                   placeholder="Longitude"
+                                   class="border rounded-lg px-3 py-2">
+                        </div>
+                    </div>
+
+                    <div class="mt-6">
                         <div id="map" class="w-full h-96 rounded-xl border"></div>
-
-                        <p class="text-xs text-gray-500 mt-2">
-                            Klik di peta untuk menentukan lokasi aset.
-                        </p>
                     </div>
 
                     <div class="mt-8 flex justify-end gap-4">
@@ -101,7 +117,7 @@
                         </a>
 
                         <button type="submit"
-                                class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                                class="px-6 py-2 bg-blue-600 text-white rounded-lg">
                             Simpan
                         </button>
                     </div>
@@ -112,47 +128,41 @@
         </div>
     </div>
 
-    {{-- LEAFLET CSS --}}
+    {{-- LEAFLET --}}
     <link rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-
-    {{-- LEAFLET JS --}}
+          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        const map = L.map('map').setView([-7.983908,112.621391], 10);
 
-            const defaultLat = -7.983908;
-            const defaultLng = 112.621391;
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
+            .addTo(map);
 
-            const map = L.map('map').setView([defaultLat, defaultLng], 10);
+        let marker = L.marker([-7.983908,112.621391], { draggable:true }).addTo(map);
 
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; OpenStreetMap'
-            }).addTo(map);
-
-            let marker;
-
-            map.on('click', function(e) {
-
-                if (marker) {
-                    map.removeLayer(marker);
-                }
-
-                marker = L.marker(e.latlng, { draggable: true }).addTo(map);
-
-                document.getElementById('latitude').value = e.latlng.lat;
-                document.getElementById('longitude').value = e.latlng.lng;
-
-                marker.on('dragend', function(event) {
-                    const position = event.target.getLatLng();
-                    document.getElementById('latitude').value = position.lat;
-                    document.getElementById('longitude').value = position.lng;
-                });
-
-            });
-
+        map.on('click', function(e){
+            marker.setLatLng(e.latlng);
+            latitude.value = e.latlng.lat;
+            longitude.value = e.latlng.lng;
         });
+
+        marker.on('dragend', function(){
+            const pos = marker.getLatLng();
+            latitude.value = pos.lat;
+            longitude.value = pos.lng;
+        });
+
+        btnLokasiSaya.onclick = function(){
+            navigator.geolocation.getCurrentPosition(function(pos){
+                const lat = pos.coords.latitude;
+                const lng = pos.coords.longitude;
+                marker.setLatLng([lat,lng]);
+                map.setView([lat,lng],16);
+                latitude.value = lat;
+                longitude.value = lng;
+            });
+        };
     </script>
 
 </x-app-layout>

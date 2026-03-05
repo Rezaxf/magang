@@ -26,11 +26,12 @@
                         {{ __('Aset') }}
                     </x-nav-link>
 
-                    <x-nav-link :href="url('/heatmap')" :active="request()->is('heatmap')">
-                        {{ __('Heatmap') }}
+                    <!-- 🔥 UPDATED -->
+                    <x-nav-link :href="route('peta.aset')" :active="request()->routeIs('peta.aset')">
+                        {{ __('Peta Aset') }}
                     </x-nav-link>
 
-                    <x-nav-link :href="url('/laporan')" :active="request()->is('laporan')">
+                    <x-nav-link :href="route('laporan')" :active="request()->routeIs('laporan')">
                         {{ __('Laporan') }}
                     </x-nav-link>
 
@@ -40,7 +41,6 @@
             <!-- Right Side -->
             <div class="hidden sm:flex sm:items-center sm:ml-6">
 
-                <!-- Settings Dropdown -->
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-600 bg-white hover:text-gray-800 focus:outline-none transition ease-in-out duration-150">
@@ -63,10 +63,8 @@
                             {{ __('Profile') }}
                         </x-dropdown-link>
 
-                        <!-- Logout -->
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-
                             <x-dropdown-link :href="route('logout')"
                                 onclick="event.preventDefault();
                                 this.closest('form').submit();">
@@ -115,11 +113,12 @@
                 {{ __('Aset') }}
             </x-responsive-nav-link>
 
-            <x-responsive-nav-link :href="url('/heatmap')" :active="request()->is('heatmap')">
-                {{ __('Heatmap') }}
+            <!-- 🔥 UPDATED -->
+            <x-responsive-nav-link :href="route('peta.aset')" :active="request()->routeIs('peta.aset')">
+                {{ __('Peta Aset') }}
             </x-responsive-nav-link>
 
-            <x-responsive-nav-link :href="url('/laporan')" :active="request()->is('laporan')">
+            <x-responsive-nav-link :href="route('laporan')" :active="request()->routeIs('laporan')">
                 {{ __('Laporan') }}
             </x-responsive-nav-link>
 
