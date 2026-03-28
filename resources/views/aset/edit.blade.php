@@ -94,6 +94,38 @@
                                    class="w-full border rounded-lg px-3 py-2">
                         </div>
 
+                        {{-- FIELD BARU --}}
+                        <div>
+                            <label>Kecamatan</label>
+                            <input type="text"
+                                   name="kecamatan"
+                                   value="{{ old('kecamatan', $aset->kecamatan) }}"
+                                   class="w-full border rounded-lg px-3 py-2"
+                                   placeholder="Masukkan kecamatan">
+                        </div>
+
+                        <div>
+                            <label>Desa</label>
+                            <input type="text"
+                                   name="desa"
+                                   value="{{ old('desa', $aset->desa) }}"
+                                   class="w-full border rounded-lg px-3 py-2"
+                                   placeholder="Masukkan desa">
+                        </div>
+
+                        <div>
+                            <label>Kondisi</label>
+                            <select name="kondisi"
+                                    class="w-full border rounded-lg px-3 py-2">
+
+                                <option value="">-- Pilih Kondisi --</option>
+                                <option value="Baik" {{ $aset->kondisi == 'Baik' ? 'selected' : '' }}>Baik</option>
+                                <option value="Rusak" {{ $aset->kondisi == 'Rusak' ? 'selected' : '' }}>Rusak</option>
+                                <option value="Perbaikan" {{ $aset->kondisi == 'Perbaikan' ? 'selected' : '' }}>Perbaikan</option>
+
+                            </select>
+                        </div>
+
                         {{-- FOTO LAMA --}}
                         <div class="md:col-span-2">
                             <label class="block mb-2">Foto Aset</label>
@@ -215,3 +247,4 @@
     </script>
 
 </x-app-layout>
+```

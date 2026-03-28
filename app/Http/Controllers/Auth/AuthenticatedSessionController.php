@@ -24,12 +24,41 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
+
+        // VALIDASI CAPTCHA WAJIB
+        $request->validate([
+            'g-recaptcha-response' => 'required'
+        ], [
+            'g-recaptcha-response.required' => 'Silakan centang captcha terlebih dahulu.'
+        ]);
+
+
+        // VERIFIKASI CAPTCHA KE GOOGLE
+        $response = file_get_contents(
+            "https://www.google.com/recaptcha/api/siteverify?secret="
+            . config('services.recaptcha.secret_key')
+            . "&response="
+            . $request->input('g-recaptcha-response')
+        );
+
+        $response = json_decode($response);
+
+
+        if (!$response->success) {
+            return back()->withErrors([
+                'captcha' => 'Verifikasi captcha gagal.'
+            ]);
+        }
+
+
+        // LOGIN NORMAL LARAVEL
         $request->authenticate();
 
         $request->session()->regenerate();
 
         return redirect()->intended(route('dashboard', absolute: false));
     }
+
 
     /**
      * Destroy an authenticated session.

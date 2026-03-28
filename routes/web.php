@@ -32,41 +32,7 @@ Route::middleware(['auth'])->group(function () {
     | Dashboard
     |------------------------------------------
     */
-    Route::get('/dashboard', function (Request $request) {
-
-        $search = $request->input('search');
-        $merk   = $request->input('merk');
-
-        $query = Aset::query();
-
-        // SEARCH
-        if ($search) {
-            $search = trim(strtolower($search));
-
-            $query->where(function ($q) use ($search) {
-                $q->whereRaw('LOWER(TRIM(nama_barang)) LIKE ?', ["%{$search}%"])
-                  ->orWhereRaw('LOWER(TRIM(kode_barang)) LIKE ?', ["%{$search}%"])
-                  ->orWhereRaw('LOWER(TRIM(merk_tipe)) LIKE ?', ["%{$search}%"]);
-            });
-        }
-
-        // FILTER MERK
-        if ($merk) {
-            $query->whereRaw('LOWER(TRIM(merk_tipe)) = ?', [strtolower(trim($merk))]);
-        }
-
-        $asets = $query->paginate(100)->withQueryString();
-        $totalHarga = (clone $query)->sum('harga');
-
-        $listMerk = Aset::select('merk_tipe')
-            ->whereNotNull('merk_tipe')
-            ->distinct()
-            ->orderBy('merk_tipe')
-            ->pluck('merk_tipe');
-
-        return view('dashboard', compact('asets', 'totalHarga', 'listMerk'));
-
-    })->name('dashboard');
+    Route::get('/dashboard', [AsetController::class, 'dashboard'])->name('dashboard');
 
 
     /*
@@ -75,6 +41,20 @@ Route::middleware(['auth'])->group(function () {
     |------------------------------------------
     */
     Route::resource('aset', AsetController::class);
+
+
+    /*
+    |------------------------------------------
+    | 🔥 NEW: API ASET PER KECAMATAN (UNTUK SIDEBAR)
+    |------------------------------------------
+    */
+    Route::get('/aset-by-kecamatan/{kecamatan}', function ($kecamatan) {
+
+        return Aset::where('kecamatan', $kecamatan)
+            ->select('id', 'nama_barang', 'kondisi', 'harga')
+            ->get();
+
+    })->name('aset.by.kecamatan');
 
 
     /*

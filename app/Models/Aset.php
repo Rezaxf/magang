@@ -18,6 +18,9 @@ class Aset extends Model
         'jumlah',
         'harga',
         'cara_perolehan',
+        'kecamatan',
+        'desa',
+        'kondisi',
         'latitude',
         'longitude',
     ];

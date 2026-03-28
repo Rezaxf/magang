@@ -18,14 +18,16 @@
 
                 {{-- SEARCH & FILTER --}}
                 <form method="GET" action="{{ route('aset.index') }}" class="mb-6">
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
 
+                        {{-- SEARCH --}}
                         <input type="text"
                                name="search"
                                value="{{ request('search') }}"
                                placeholder="Cari nama, kode, merk..."
                                class="border rounded-lg px-4 py-2">
 
+                        {{-- FILTER MERK --}}
                         <select name="merk_tipe"
                                 class="border rounded-lg px-4 py-2">
                             <option value="">Semua Merk</option>
@@ -37,11 +39,28 @@
                             @endforeach
                         </select>
 
+                        {{-- 🆕 FILTER KECAMATAN --}}
+                        <select name="kecamatan"
+                                class="border rounded-lg px-4 py-2">
+
+                            <option value="">Semua Kecamatan</option>
+
+                            @foreach(\App\Models\Aset::select('kecamatan')->distinct()->pluck('kecamatan') as $kec)
+                                <option value="{{ $kec }}"
+                                    {{ request('kecamatan') == $kec ? 'selected' : '' }}>
+                                    {{ $kec }}
+                                </option>
+                            @endforeach
+
+                        </select>
+
+                        {{-- BUTTON FILTER --}}
                         <button type="submit"
                                 class="bg-blue-600 text-white rounded-lg px-4 py-2">
                             Filter
                         </button>
 
+                        {{-- RESET --}}
                         <a href="{{ route('aset.index') }}"
                            class="bg-gray-500 text-white rounded-lg px-4 py-2 text-center">
                             Reset
@@ -66,6 +85,12 @@
                                 <th class="py-3 px-4 text-sm font-semibold text-gray-600">Kode Barang</th>
                                 <th class="py-3 px-4 text-sm font-semibold text-gray-600">Merk/Tipe</th>
                                 <th class="py-3 px-4 text-sm font-semibold text-gray-600">Harga</th>
+
+                                {{-- 🆕 KECAMATAN --}}
+                                <th class="py-3 px-4 text-sm font-semibold text-gray-600">Kecamatan</th>
+
+                                {{-- 🆕 KONDISI --}}
+                                <th class="py-3 px-4 text-sm font-semibold text-gray-600">Kondisi</th>
 
                                 <th class="py-3 px-4 text-sm font-semibold text-gray-600 text-center">
                                     Foto
@@ -97,6 +122,23 @@
                                         Rp {{ number_format($aset->harga, 0, ',', '.') }}
                                     </td>
 
+                                    {{-- 🆕 KECAMATAN --}}
+                                    <td class="py-4 px-4 text-sm">
+                                        {{ $aset->kecamatan ?? '-' }}
+                                    </td>
+
+                                    {{-- 🆕 KONDISI --}}
+                                    <td class="py-4 px-4 text-sm">
+                                        <span class="
+                                            px-2 py-1 rounded text-xs font-bold
+                                            {{ $aset->kondisi == 'Baik' ? 'bg-green-100 text-green-700' : '' }}
+                                            {{ $aset->kondisi == 'Rusak' ? 'bg-red-100 text-red-700' : '' }}
+                                            {{ $aset->kondisi == 'Perbaikan' ? 'bg-yellow-100 text-yellow-700' : '' }}
+                                        ">
+                                            {{ $aset->kondisi ?? '-' }}
+                                        </span>
+                                    </td>
+
                                     {{-- FOTO --}}
                                     <td class="py-4 px-4 text-center">
                                         @if($aset->fotos->count())
@@ -111,19 +153,16 @@
                                     <td class="py-4 px-4 text-center">
                                         <div class="flex justify-center gap-2">
 
-                                            {{-- QR --}}
                                             <a href="{{ route('aset.show', $aset->id) }}"
                                                class="px-3 py-1 bg-blue-600 text-white rounded-lg text-xs font-bold hover:bg-blue-700 transition shadow">
                                                 QR
                                             </a>
 
-                                            {{-- EDIT --}}
                                             <a href="{{ route('aset.edit', $aset->id) }}"
                                                class="px-3 py-1 bg-green-600 text-white rounded-lg text-xs font-bold hover:bg-green-700 transition shadow">
                                                 Edit
                                             </a>
 
-                                            {{-- DELETE --}}
                                             <form action="{{ route('aset.destroy', $aset->id) }}"
                                                   method="POST"
                                                   onsubmit="return confirm('Yakin ingin menghapus aset ini?')">
@@ -142,7 +181,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6"
+                                    <td colspan="8"
                                         class="py-10 text-center text-gray-500 italic">
                                         Belum ada data aset.
                                     </td>
